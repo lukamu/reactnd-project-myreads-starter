@@ -1,30 +1,11 @@
 import React from 'react'
-import { Route } from 'react-router-dom'
+import { Route, Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import ListBooks from './ListBooks'
 import SearchBooks from './SearchBooks'
 import './App.css'
 
-class BooksApp extends React.Component {
-  state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false, //to be replced with React Router
-    books: []
-  }
-
-  componentDidMount() {
-    BooksAPI.getAll().then((books) => {
-      this.setState({ books })
-    })
-  }
-
-  render() {
-    const shelfDictionary = {
+const shelfDictionary = {
       curr: {
         shelfTitle : 'Currently Reading',
         shelfStatus : 'currentlyReading'},
@@ -33,19 +14,44 @@ class BooksApp extends React.Component {
         shelfStatus : 'wantToRead'},
       read: {
         shelfTitle : 'Read',
-        shelfStatus : 'read'
+        shelfStatus : 'read'},
+      none: {
+        shelfTitle : 'None',
+        shelfStatus : 'none'
       }
     }
 
-    const shelfSelection = [
+const shelfSelection = [
       {shelfTitle: shelfDictionary.curr.shelfTitle, shelfStatus: shelfDictionary.curr.shelfStatus},
       {shelfTitle: shelfDictionary.want.shelfTitle, shelfStatus: shelfDictionary.want.shelfStatus},
       {shelfTitle: shelfDictionary.read.shelfTitle, shelfStatus: shelfDictionary.read.shelfStatus}]
 
+class BooksApp extends React.Component {
 
+  state = {
+    books: []
+  }
 
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+      this.setState({ books : books })
+    })
+  }
 
+  updateShelf = (book, shelfValue) => {
+    if (this.state.books.filter(e => e.id === book.id)) {
+      console.log("Found book: " + book.title)
+      BooksAPI.update(book, shelfValue).then((book) => {
+        BooksAPI.getAll().then((books) => {
+          this.setState({ books : books })
+        })
+      }) 
+    } else if (book.shelf !== shelfDictionary.none.shelfStatus) {
+      console.log("Insert new book: " + book.title)
+    }
+  }
 
+  render() {
     return (
      <div className="app">
       <Route exact path="/" render={() => (
@@ -55,26 +61,29 @@ class BooksApp extends React.Component {
           </div>
           <div className="list-books-content">
             <div>
-            {shelfSelection.map(item => (
+            {shelfSelection.map((item, index) => 
               <ListBooks
+                key={index}
                 shelfDictionary={shelfDictionary}
                 shelfTitle={item.shelfTitle}
                 books={this.state.books.filter(book => book.shelf === item.shelfStatus)}
+                onUpdateShelf={this.updateShelf}
               />
-              ))}
+              )}
             </div>
           </div>
           <div className="open-search">
-            <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+            <Link to="/search">Add a book</Link>
           </div>
         </div> 
       )}/>
-          
       <Route path="/search" render={({ history }) => (
         <div className="search-books">
           <div className="search-books-bar">
-            <SearchBooks 
+            <SearchBooks
+              shelfDictionary={shelfDictionary}
               books={this.state.books}
+              onUpdateShelf={this.updateShelf}
             />
           </div>
         </div>

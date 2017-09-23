@@ -4,36 +4,45 @@ import PropTypes from 'prop-types'
 //import escapeRegExp from 'escape-string-regexp'
 //import sortBy from 'sort-by'
 
+let book_selected;
+
 class ListBooks extends Component {
 	static propTypes = {
     shelfDictionary : PropTypes.object.isRequired,
-    shelfTitle : PropTypes.string.isRequired,
-		books : PropTypes.array.isRequired
+    shelfTitle : PropTypes.string,
+		books : PropTypes.array.isRequired,
+    onUpdateShelf : PropTypes.func.isRequired
 	}
 
+  changeShelf = (book, event) => {
+    //e.preventDefault()
+    if (this.props.onUpdateShelf)
+      this.props.onUpdateShelf(book, event.target.value)
+    //console.log(id, event.target.value)
+  }
+
+  
 
 	render() {
 		const { shelfDictionary, shelfTitle, books } = this.props
 
   	return(
-      <div className="list-books-content">
-        <div>
           <div className="bookshelf">
             <h2 className="bookshelf-title">{shelfTitle}</h2>
             <div className="bookshelf-books">
               <ol className="books-grid">
-              {books.map(book => (
+              {books.map(book => 
                 <li key={book.id}>
                   <div className="book">
                     <div className="book-top">
                       <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.smallThumbnail})` }}></div>
                         <div className="book-shelf-changer">
-                          <select value={book.shelf}>
-                            <option value="none" disabled>Move to...</option>
+                          <select value={book.shelf} onChange={this.changeShelf.bind(this, book)}>
+                            <option value="move" disabled>Move to...</option>
                             <option value={shelfDictionary.curr.shelfStatus}>{shelfDictionary.curr.shelfTitle}</option>
                             <option value={shelfDictionary.want.shelfStatus}>{shelfDictionary.want.shelfTitle}</option>
                             <option value={shelfDictionary.read.shelfStatus}>{shelfDictionary.read.shelfTitle}</option>
-                            <option value="none">None</option>
+                            <option value={shelfDictionary.none.shelfStatus}>{shelfDictionary.none.shelfTitle}</option>
                           </select>
                         </div>
                     </div>
@@ -41,12 +50,10 @@ class ListBooks extends Component {
                     <div className="book-authors">{book.authors}</div>
                   </div>
                 </li>
-              ))}
+              )}
               </ol>
             </div>
           </div>
-        </div>
-      </div>
   	)
 	}
 }
