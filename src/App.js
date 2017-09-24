@@ -5,6 +5,9 @@ import ListBooks from './ListBooks'
 import SearchBooks from './SearchBooks'
 import './App.css'
 
+//Shelf status are listed in this object: in case we want to update or add
+// more status in the future, this is the only placheholder for shelf values.
+
 const shelfDictionary = {
       curr: {
         shelfTitle : 'Currently Reading',
@@ -34,21 +37,21 @@ class BooksApp extends React.Component {
 
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
-      this.setState({ books : books })
+      this.setState({ books });
     })
   }
 
+  /**
+  * @description  Update books state, according to the new shelf selection.
+  * @param {book} query - The book obj to be updated
+  * @param {shelfValue} query - The new shelf status of the book
+  */
   updateShelf = (book, shelfValue) => {
-    if (this.state.books.filter(e => e.id === book.id)) {
-      console.log("Found book: " + book.title)
-      BooksAPI.update(book, shelfValue).then((book) => {
-        BooksAPI.getAll().then((books) => {
-          this.setState({ books : books })
-        })
-      }) 
-    } else if (book.shelf !== shelfDictionary.none.shelfStatus) {
-      console.log("Insert new book: " + book.title)
-    }
+    BooksAPI.update(book, shelfValue).then((book) => {
+      BooksAPI.getAll().then((books) => {
+        this.setState({ books });
+      })
+    }) 
   }
 
   render() {
@@ -78,15 +81,11 @@ class BooksApp extends React.Component {
         </div> 
       )}/>
       <Route path="/search" render={({ history }) => (
-        <div className="search-books">
-          <div className="search-books-bar">
             <SearchBooks
               shelfDictionary={shelfDictionary}
               books={this.state.books}
               onUpdateShelf={this.updateShelf}
-            />
-          </div>
-        </div>
+            />          
       )}/>  
      </div>
     )

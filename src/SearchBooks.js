@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-//import escapeRegExp from 'escape-string-regexp'
 import * as BooksAPI from './BooksAPI'
 import ListBooks from './ListBooks'
-//import sortBy from 'sort-by'
 
 class SearchBooks extends Component {
 	static propTypes = {
@@ -17,7 +15,6 @@ class SearchBooks extends Component {
 		searchBooks: []
 	}
 
-
 	/**
 	* @description  Search books, and set shelf value if the book.id is
 					in one of my book shelfs
@@ -26,25 +23,43 @@ class SearchBooks extends Component {
 	updateQuery = (query) => {
 		if (query){
 			BooksAPI.search(query, 50).then((result) => {
-				console.log(query)
 				if(!result.error) {
     	  			for(var i=0; i < result.length; i++) {
-    	  				let match = this.props.books.filter((e) => e.id === result[i].id)
+    	  				let match = this.findBook(result[i]);
 						if (match.length === 1) {
-							result[i].shelf = match[0].shelf
-							console.log("Match! ====>> " + result[i].shelf)
+							result[i].shelf = match[0].shelf;
 						} else {
-							result[i].shelf = this.props.shelfDictionary.none.shelfStatus
-							console.log("NO match! ====>> " + result[i].shelf)
+							result[i].shelf = this.props.shelfDictionary.none.shelfStatus;
 						}
 					}
-					this.setState({ searchBooks: result })
+					this.setState({ searchBooks: result });
     	  		}
     		})
 		} else {
-			this.setState({ searchBooks: [] })
+			this.setState({ searchBooks: [] });
 		}
 	}
+
+	findBook(book) {
+    	return this.props.books.filter((e) => e.id === book.id);
+    }
+
+	/**
+	* @description  Update book array in App.js, and the shelf status in the search array.
+	* @param {book} query - The book obj to be updated
+	* @param {shelfValue} query - The new shelf status of the book
+	*/
+	updateSelection = (book, shelfValue) => {
+    	this.props.onUpdateShelf(book, shelfValue);
+    	let updatedSearchBookArray = this.state.searchBooks;
+    	for(var i=0; i < updatedSearchBookArray.length; i++) {
+			if (updatedSearchBookArray[i].id === book.id) {
+				updatedSearchBookArray[i].shelf = shelfValue;
+				this.setState({ searchBooks: updatedSearchBookArray });
+				break;
+			} 
+		}	
+    }
 
 	render() {
 		return(
@@ -65,7 +80,7 @@ class SearchBooks extends Component {
 				<ListBooks
 					shelfDictionary={this.props.shelfDictionary}
                 	books={this.state.searchBooks}
-                	onUpdateShelf={this.props.onUpdateShelf}
+                	onUpdateShelf={this.updateSelection}
               	/>
               </ol>
             </div>

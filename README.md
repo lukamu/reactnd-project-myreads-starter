@@ -1,15 +1,16 @@
 # MyReads Project
+# Author: Luca Musso
 
-This is the starter template for the final assessment project for Udacity's React Fundamentals course. The goal of this template is to save you time by providing a static example of the CSS and HTML markup that may be used, but without any of the React code that is needed to complete the project. If you choose to start with this template, your job will be to add interactivity to the app by refactoring the static code in this template.
-
-Of course, you are free to start this project from scratch if you wish! Just be sure to use [Create React App](https://github.com/facebookincubator/create-react-app) to bootstrap the project.
+Starting from the templated provided, I create two new components: ListBooks and SearchBooks. The two componets are implemented in two new files, according with React best practices, named: ListBooks.js and SearchBooks.js.
+This project is available on: 
+https://github.com/lukamu/reactnd-project-myreads-starter
 
 ## TL;DR
 
 To get started developing right away:
 
 * install all project dependencies with `npm install`
-* start the development server with `npm start`
+* start the development server with `yarn start` or `npm start`
 
 ## What You're Getting
 ```bash
@@ -22,9 +23,12 @@ To get started developing right away:
 │   └── index.html # DO NOT MODIFY
 └── src
     ├── App.css # Styles for your app. Feel free to customize this as you desire.
-    ├── App.js # This is the root of your app. Contains static HTML right now.
+    ├── App.js # This is the root of the app. It contains the list of my book as a React state, to display the book on the right shelf. 
     ├── App.test.js # Used for testing. Provided with Create React App. Testing is encouraged, but not required.
     ├── BooksAPI.js # A JavaScript API for the provided Udacity backend. Instructions for the methods are below.
+    ├── ListBooks.js # This is the component that shows the books. It displays the shelfs when Route path is '/', otherwise the list of the available books according
+    to the search query, when Route path is '/search'
+    ├── SearchBooks.js # This is the component for searching new books. If a book is already in the list of my books, it shows the current shelf status. It contains an array with the list of the books that matched the query. When the user update the query, or the state of the book, the state is updated.
     ├── icons # Helpful images for your app. Use at your discretion.
     │   ├── add.svg
     │   ├── arrow-back.svg
@@ -33,7 +37,6 @@ To get started developing right away:
     └── index.js # You should not need to modify this file. It is used for DOM rendering only.
 ```
 
-Remember that good React design practice is to create new JS files for each component and use import/require statements to include them where they are needed.
 
 ## Backend Server
 

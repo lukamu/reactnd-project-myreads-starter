@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
-//import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-//import escapeRegExp from 'escape-string-regexp'
-//import sortBy from 'sort-by'
+import sortBy from 'sort-by'
 
-let book_selected;
 
 class ListBooks extends Component {
 	static propTypes = {
@@ -15,17 +12,14 @@ class ListBooks extends Component {
 	}
 
   changeShelf = (book, event) => {
-    //e.preventDefault()
-    if (this.props.onUpdateShelf)
-      this.props.onUpdateShelf(book, event.target.value)
-    //console.log(id, event.target.value)
+    if (this.props.onUpdateShelf) {
+      this.props.onUpdateShelf(book, event.target.value);
+    }
   }
 
-  
-
 	render() {
-		const { shelfDictionary, shelfTitle, books } = this.props
-
+		const { shelfDictionary, shelfTitle, books } = this.props;
+    books.sort(sortBy('title'));
   	return(
           <div className="bookshelf">
             <h2 className="bookshelf-title">{shelfTitle}</h2>
