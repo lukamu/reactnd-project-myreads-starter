@@ -1,8 +1,9 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import * as BooksAPI from './BooksAPI'
-import ListBooks from './ListBooks'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import * as BooksAPI from './BooksAPI';
+import ListBooks from './ListBooks';
+import DebounceInput from 'react-debounce-input';
 
 class SearchBooks extends Component {
 	static propTypes = {
@@ -49,17 +50,11 @@ class SearchBooks extends Component {
 	* @param {book} query - The book obj to be updated
 	* @param {shelfValue} query - The new shelf status of the book
 	*/
-	updateSelection = (book, shelfValue) => {
-    	this.props.onUpdateShelf(book, shelfValue);
-    	let updatedSearchBookArray = this.state.searchBooks;
-    	for(var i=0; i < updatedSearchBookArray.length; i++) {
-			if (updatedSearchBookArray[i].id === book.id) {
-				updatedSearchBookArray[i].shelf = shelfValue;
-				this.setState({ searchBooks: updatedSearchBookArray });
-				break;
-			} 
-		}	
-    }
+    updateSelection = (book, shelfValue) => {
+  		this.props.onUpdateShelf(book, shelfValue);
+  		book.shelf = shelfValue;
+  		this.setState({searchBooks: this.state.searchBooks.filter((b) => b.id !== book.id).concat(book)});
+	}
 
 	render() {
 		return(
@@ -67,8 +62,10 @@ class SearchBooks extends Component {
             <div className="search-books-bar">
               <Link className="close-search" to="/"></Link>
               <div className="search-books-input-wrapper">
-                <input 
-                	type="text" 
+                <DebounceInput
+          			minLength={1}
+          			debounceTimeout={500}
+                	type="text"
                 	placeholder="Search by title or author"
                 	value={this.state.query}
 					onChange={(event) => this.updateQuery(event.target.value)}

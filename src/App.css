@@ -172,3 +172,43 @@ body, .app {
   text-align: center;
   font-size: 0.8em;
 }
+
+.responsive-image{
+    width: 100%;
+    background-size: cover;
+} 
+
+/* Retina display */
+@media screen and (min-width: 1024px){
+    .responsive-image{
+        background-size: cover;    
+      }
+}
+
+/* Desktop */
+@media screen and (min-width: 980px) and (max-width: 1024px){
+    .responsive-image{
+        background-size: cover;  
+    }
+}
+
+/* Tablet */
+@media screen and (min-width: 760px) and (max-width: 980px){
+    .responsive-image{
+        background-size: cover;
+    }
+}
+
+/* Mobile HD */
+@media screen and (min-width: 350px) and (max-width: 760px){
+    .responsive-image{
+        background-size: cover;
+    }
+}
+
+/* Mobile LD */
+@media screen and (max-width: 350px){
+    .responsive-image{
+        background-size: cover;
+    }
+} 

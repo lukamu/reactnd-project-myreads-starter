@@ -1,9 +1,9 @@
-import React from 'react'
-import { Route, Link } from 'react-router-dom'
-import * as BooksAPI from './BooksAPI'
-import ListBooks from './ListBooks'
-import SearchBooks from './SearchBooks'
-import './App.css'
+import React from 'react';
+import { Route, Link } from 'react-router-dom';
+import * as BooksAPI from './BooksAPI';
+import ListBooks from './ListBooks';
+import SearchBooks from './SearchBooks';
+import './App.css';
 
 //Shelf status are listed in this object: in case we want to update or add
 // more status in the future, this is the only placheholder for shelf values.
@@ -47,11 +47,11 @@ class BooksApp extends React.Component {
   * @param {shelfValue} query - The new shelf status of the book
   */
   updateShelf = (book, shelfValue) => {
-    BooksAPI.update(book, shelfValue).then((book) => {
-      BooksAPI.getAll().then((books) => {
-        this.setState({ books });
-      })
-    }) 
+    BooksAPI.update(book, shelfValue).then(() => {
+        book.shelf = shelfValue;
+        let updatedBooks = this.state.books.filter((b) => b.id !== book.id).concat([book]);
+        this.setState({books: updatedBooks}); 
+    })
   }
 
   render() {
